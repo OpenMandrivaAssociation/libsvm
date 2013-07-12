@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=svm-toy-gtk
+GenericName=svm-toy GTK version
+Comment=GTK version of svm-toy (libsvm demostration program)
+Exec=svm-toy-gtk
+Icon=libsvm-svm-toy-gtk-48
+StartupNotify=true
+Terminal=false
+Type=Application
+Categories=GTK;Education;Science;Math;DataVisualization

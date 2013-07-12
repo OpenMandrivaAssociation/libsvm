@@ -1,0 +1,59 @@
+diff -up ./java/Makefile.javaDir ./java/Makefile
+--- ./java/Makefile.javaDir	2009-02-18 10:41:04.000000000 +1000
++++ ./java/Makefile	2010-11-08 10:59:11.229518442 +1000
+@@ -4,13 +4,21 @@ FILES = libsvm/svm.class libsvm/svm_mode
+ 		libsvm/svm_print_interface.class \
+ 		svm_train.class svm_predict.class svm_toy.class svm_scale.class
+
++JAVA_DOC_DIR=${INSTDIR}/share/javadoc/libsvm-${LIBSVM_VER}
++CLASSPATH = .
+ #JAVAC = jikes
+-JAVAC_FLAGS = -target 1.5 -source 1.5
++JAVAC_FLAGS = -target 1.5 -source 1.5  -classpath ${CLASSPATH}
++ifndef JAVAC
+ JAVAC = javac
++endif
+ # JAVAC_FLAGS =
+
++ifndef JAR
++JAR=jar
++endif
++
+ all: $(FILES)
+-	jar cvf libsvm.jar *.class libsvm/*.class
++	${JAR} cvf libsvm.jar *.class libsvm/*.class
+
+ .java.class:
+ 	$(JAVAC) $(JAVAC_FLAGS) $<
+@@ -18,8 +26,23 @@ all: $(FILES)
+ libsvm/svm.java: libsvm/svm.m4
+ 	m4 libsvm/svm.m4 > libsvm/svm.java
+
++javadoc: docs/index.html
++
++docs/index.html: $(FILES)
++	javadoc -d docs *.java libsvm/*.java
++
++install:
++	mkdir -p ${JAVA_TARGET_DIR}
++	install -m 644 libsvm.jar ${JAVA_TARGET_DIR}
++#	mkdir -p ${JAVA_DOC_DIR}
++#	cd docs; cp -R * ${JAVA_DOC_DIR}
++uninstall:
++	rm -fr ${JAVA_TARGETDIR}
++#	rm -fr ${JAVA_DOC_DIR}
++
+ clean:
+ 	rm -f libsvm/*.class *.class *.jar libsvm/*~ *~ libsvm/svm.java
++	rm -rf docs
+
+ dist: clean all
+ 	rm *.class libsvm/*.class
+diff -up ./java/test_applet.html.javaDir ./java/test_applet.html
+--- ./java/test_applet.html.javaDir	2003-07-12 14:07:32.000000000 +1000
++++ ./java/test_applet.html	2010-11-08 10:59:11.229518442 +1000
+@@ -1 +1,3 @@
+-<APPLET code="svm_toy.class" archive="libsvm.jar" width=300 height=350></APPLET>
++<html>
++<applet code="svm_toy.class" archive="libsvm.jar" width=300 height=350></applet>
++</html>

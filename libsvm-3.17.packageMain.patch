@@ -1,0 +1,128 @@
+diff -up ./Makefile.packageMain ./Makefile
+--- ./Makefile.packageMain	2013-03-31 17:06:44.000000000 +1000
++++ ./Makefile	2013-04-13 22:59:43.796601417 +1000
+@@ -1,11 +1,45 @@
+ CXX ?= g++
+-CFLAGS = -Wall -Wconversion -O3 -fPIC
++CFLAGS = ${RPM_CFLAGS} -Wall -Wconversion -O3 -fPIC
+ SHVER = 2
++export SHVER
+ OS = $(shell uname)
++MAKE = make
++DOT_LIBS=.
++LIBS= -L${DOT_LIBS} -lsvm
++export LIBSVM_VER
++IS_64:=$(shell /bin/uname -i | awk '/64/ {print 64}')
++PREFIXDIR?= /usr
++export PREFIXDIR
+ 
+-all: svm-train svm-predict svm-scale
++LIBDIR?=${PREFIXDIR}/lib${IS_64}
++export LIBDIR
+ 
+-lib: svm.o
++DATADIR?=${PREFIXDIR}/share
++export DATADIR
++
++BINDIR?=${PREFIXDIR}/bin
++export BINDIR
++
++INCLUDEDIR_INSTALL:=${DESTDIR}/${PREFIXDIR}/include
++export INCLUDEDIR_INSTALL
++
++LIBDIR_INSTALL:=${DESTDIR}/${LIBDIR}
++export LIBDIR_INSTALL
++
++DATADIR_INSTALL:=${DESTDIR}/${DATADIR}
++export DATA_INSTALL
++
++BINDIR_INSTALL:=${DESTDIR}/${BINDIR}
++export BINDIR_INSTALL
++
++all: lib svm-train svm-predict svm-scale svm-python svm-java svm-toy-gtk svm-toy-qt
++
++lib: libsvm.so.$(SHVER) libsvm.so
++
++libsvm.so: libsvm.so.$(SHVER)
++	ln -sf libsvm.so.$(SHVER) libsvm.so
++
++libsvm.so.$(SHVER): svm.o
+ 	if [ "$(OS)" = "Darwin" ]; then \
+ 		SHARED_LIB_FLAG="-dynamiclib -Wl,-install_name,libsvm.so.$(SHVER)"; \
+ 	else \
+@@ -14,12 +48,72 @@ lib: svm.o
+ 	$(CXX) $${SHARED_LIB_FLAG} svm.o -o libsvm.so.$(SHVER)
+ 
+ svm-predict: svm-predict.c svm.o
+-	$(CXX) $(CFLAGS) svm-predict.c svm.o -o svm-predict -lm
++	$(CXX) $(CFLAGS) svm-predict.c $(LIBS) -o svm-predict -lm
+ svm-train: svm-train.c svm.o
+-	$(CXX) $(CFLAGS) svm-train.c svm.o -o svm-train -lm
++	$(CXX) $(CFLAGS) svm-train.c $(LIBS) -o svm-train -lm
+ svm-scale: svm-scale.c
+ 	$(CXX) $(CFLAGS) svm-scale.c -o svm-scale
+ svm.o: svm.cpp svm.h
+ 	$(CXX) $(CFLAGS) -c svm.cpp
+ clean:
+-	rm -f *~ svm.o svm-train svm-predict svm-scale libsvm.so.$(SHVER)
++	rm -f *~ svm.o svm-train svm-predict svm-scale svm-toy/gtk/svm-toy-gtk  svm-toy/qt/svm-toy-qt
++	${MAKE} -C python clean
++	${MAKE} -C java clean
++svm-python:
++	${MAKE} -C python
++
++svm-java:
++ifneq ("${NO_JAVA}","NO_JAVA")
++	${MAKE} -C java
++endif
++svm-toy-gtk:
++	${MAKE} -C svm-toy/gtk
++
++svm-toy-qt:
++	${MAKE} -C svm-toy/qt
++
++install: all
++	mkdir -p ${BINDIR_INSTALL}
++	install -m 755 svm-train ${BINDIR_INSTALL}
++	install -m 755 svm-predict ${BINDIR_INSTALL}
++	install -m 755 svm-scale ${BINDIR_INSTALL}
++	mkdir -p ${LIBDIR_INSTALL}
++	install -m 755 libsvm.so.$(SHVER) ${LIBDIR_INSTALL}
++# install package libsvm-devel
++	mkdir -p ${INCLUDEDIR_INSTALL}/libsvm
++	install -m 644 svm.h ${INCLUDEDIR_INSTALL}/libsvm
++	mkdir -p ${DATADIR_INSTALL}/libsvm/src/java/libsvm
++	install -m 644 *.h ${DATADIR_INSTALL}/libsvm/src
++	install -m 644 *.c ${DATADIR_INSTALL}/libsvm/src
++	install -m 644 *.cpp ${DATADIR_INSTALL}/libsvm/src
++	install -m 644 Makefile ${DATADIR_INSTALL}/libsvm/src
++ifneq ("${NO_JAVA}","NO_JAVA")
++	install -m 644 java/*.java ${DATADIR_INSTALL}/libsvm/src/java
++	install -m 644 java/Makefile ${DATADIR_INSTALL}/libsvm/src/java
++	install -m 644 java/libsvm/*.java ${DATADIR_INSTALL}/libsvm/src/java/libsvm
++	install -m 644 java/libsvm/*.m4 ${DATADIR_INSTALL}/libsvm/src/java/libsvm
++# install package libsvm-java
++	${MAKE} -C java install
++endif
++# install package libsvm-python
++	${MAKE} -C python install
++# install package svm-toy
++	install -m 755 svm-toy/gtk/svm-toy-gtk ${BINDIR_INSTALL}
++	install -m 755 svm-toy/qt/svm-toy-qt ${BINDIR_INSTALL}
++# install examples
++	mkdir -p ${DATADIR_INSTALL}/libsvm/examples
++	install -m 644 heart_scale ${DATADIR_INSTALL}/libsvm/examples
++uninstall:
++	rm -f ${BINDIR_INSTALL}/svm-train
++	rm -f ${BINDIR_INSTALL}/svm-predict
++	rm -f ${BINDIR_INSTALL}/svm-scale
++	rm -fr ${DATADIR_INSTALL}/libsvm
++	rm -f ${INCLUDEDIR_INSTALL}/libsvm/svm.h
++	rm -f ${LIBDIR_INSTALL}/libsvm.so*
++	${MAKE} -C python uninstall
++ifneq ("${NO_JAVA}","NO_JAVA")
++	${MAKE} -C java uninstall
++endif
++	rm -f ${BINDIR_INSTALL}/svm-toy-gtk
++	rm -f ${BINDIR_INSTALL}/svm-toy-qt
++

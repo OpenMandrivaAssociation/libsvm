@@ -1,0 +1,25 @@
+diff -up ./python/Makefile.pythonDir ./python/Makefile
+--- ./python/Makefile.pythonDir	2011-05-10 09:35:15.000000000 +1000
++++ ./python/Makefile	2011-11-08 09:49:54.280501207 +1000
+@@ -1,4 +1,20 @@
++PYTHONDIR_NAME ?= python${PYTHON_VERSION}/site-packages/libsvm
++PYTHONDIR?=${LIBDIR}/${PYTHONDIR_NAME}
++PYTHONDIR_INSTALL=${DESTDIR}/${PYTHONDIR}
++SVM_TOOLS:= $(notdir $(wildcard ../tools/*.py))
++
+ all = lib
+ 
+-lib:
++all: lib
++
++lib: ../svm.cpp ../svm.h
+ 	make -C .. lib
++
++install: all
++	mkdir -p ${PYTHONDIR_INSTALL}
++	install -m 755 *.py ${PYTHONDIR_INSTALL}
++	install -m 755 ../tools/*.py ${PYTHONDIR_INSTALL}
++	$(foreach toolPy,$(SVM_TOOLS),ln -s ${PYTHONDIR}/$(toolPy) ${BINDIR_INSTALL}/svm-$(toolPy);)
++
++uninstall:
++	rm -fr ${LIBDIR}/${PYTHON_PATH} $(addprefix ${BINDIR_INSTALL}/svm-,$(SVM_TOOLS))
