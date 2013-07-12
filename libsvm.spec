@@ -101,7 +101,6 @@ BuildRequires:  desktop-file-utils
 BuildRequires:  pkgconfig
 
 BuildRequires:  qt4-devel
-Requires:       qt4
 Requires:       %{name} = %{version}-%{release}
 
 %description svm-toy-qt
