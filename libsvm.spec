@@ -1,7 +1,7 @@
 %define shver 2
 Name:           libsvm
 Version:        3.17
-Release:        1
+Release:        2
 Summary:        A Library for Support Vector Machines
 
 License:        BSD
