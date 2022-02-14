@@ -1,2 +1,4 @@
 sources:
-  "libsvm-3.17.tar.gz": f6e5b238f89368f3e4c9ac65278ad8660d80c85c
+  LibSVM-svm-toy-48.png: 2e30ddfda55f2aee56cb000c5c1ea6da4cd379f7
+  guide.pdf: b86b1ff617e294448a922c190f3a8873f0a36a5f
+  libsvm-3.25.tar.gz: 368e126686e70a2cd18c5804b249037463a5c15e
