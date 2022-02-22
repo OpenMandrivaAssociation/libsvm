@@ -1,4 +1,6 @@
 %define shver 2
+%define devname %mklibname svm -d
+%define libname %mklibname svm %shver
 
 %global libdir_libsvm %{_libdir}/libsvm
 %global python3_libsvm_dir %{python3_sitearch}/libsvm
@@ -20,7 +22,7 @@
 
 %bcond_without java
 %bcond_with maven
-%bcond_with octave
+%bcond_without octave
 %bcond_without python
 %bcond_with gtk
 %bcond_without qt
@@ -71,28 +73,45 @@ estimation (one-class SVM ). It supports multi-class classification.
 %{_bindir}/svm-train
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/examples
-%{_libdir}/%{name}.so.%{shver}
 
 #---------------------------------------------------------------------------
 
-%package devel
+%package -n %{libname}
 Summary:		Header file, object file, and source files of libsvm in C, C++ and Java
 BuildRequires:	glibc-devel gawk
 Requires: 		%{name} = %{version}-%{release}
 
-%description devel
+%description -n %{libname}
+LIBSVM is an integrated software for support vector classification,
+(C-SVC, nu-SVC ), regression (epsilon-SVR, nu-SVR) and distribution
+estimation (one-class SVM ). It supports multi-class classification.
+
+This package provdes the libsvm shared library.
+
+%files -n %{libname}
+%{_libdir}/%{name}.so.%{shver}
+
+#---------------------------------------------------------------------------
+
+%package -n %{devname}
+Summary:		Header file, object file, and source files of libsvm in C, C++ and Java
+BuildRequires:	glibc-devel gawk
+Requires: 		%{name} = %{version}-%{release}
+
+%description -n %{devname}
 Header file, object file of libsvm in C, C++ and Java.
 Install this package if you want to develop programs with libsvm.
 
-%files devel
+%files -n %{devname}
 %doc README
 %{_includedir}/%{name}/
 %{_libdir}/%{name}.so
 %{_datadir}/%{name}/src
+
 #---------------------------------------------------------------------------
 
 %if %{with python}
-%package python
+%package -n python-%{name}
 Summary:		Python tools and interfaces for libsvm
 BuildRequires:	pkgconfig(python3)
 BuildRequires:	python3dist(setuptools)
@@ -101,12 +120,12 @@ Requires:		%{name} = %{version}-%{release}
 #gnuplot is required by easy.py
 Requires:		gnuplot
 
-%description python
+%description -n python-%{name}
 Python tools and interfaces for libsvm.
 Install this package if you want to develop
 programs with libsvm in Python.
 
-%files python
+%files -n python-%{name}
 %doc python/README-Python tools/README-Tools
 %{libsvm_python_dir}
 %{_bindir}/svm-*.py
@@ -116,21 +135,23 @@ programs with libsvm in Python.
 #---------------------------------------------------------------------------
 
 %if %{with java}
-%package java
+%package -n java-%{name}
 Summary:		Java tools and interfaces for libsvm
 BuildRequires:	java-devel
 BuildRequires:	javapackages-tools
-#BuildRequires:	maven-local
+%if %{with maven}
+BuildRequires:	maven-local
+%endif
 Requires:		java
 Requires:		javapackages-tools
 Requires:		%{name} = %{version}-%{release}
 
-%description java
+%description -n java-%{name}
 Java tools and interfaces for libsvm.
 Install this package if you want to develop
 programs with libsvm in Java.
 
-%files java
+%files -n java-%{name}
 %doc java/README-Java java/test_applet.html
 %{_javadir}/%{name}.jar
 %endif
@@ -146,7 +167,7 @@ BuildArch:		noarch
 Requires:		%{name}-java = %{version}-%{release}
 
 %description javadoc
-Javadoc for libsvm
+Javadoc for libsvm.
 
 %files javadoc
 %{_javadocdir}/%{name}/
@@ -279,7 +300,8 @@ cp README svm-toy/qt
 %if %{with octave}
 cd matlab
 octave -H -q --no-window-system --no-site-file << EOF
-%__make RPM_CFLAGS="%{optflags}" LIBDIR="%{_libdir}" CPP_STD="%{cpp_std}" CXX=${CXX}
+#__make RPM_CFLAGS="%{optflags}" LIBDIR="%{_libdir}" CPP_STD="%{cpp_std}" CXX=${CXX}
+make -O V=1 LIBDIR="%{_libdir}" CPP_STD="%{cpp_std}" CXX=${CXX}
 EOF
 cd -
 %endif
@@ -307,7 +329,7 @@ for p in %{buildroot}%{python3_libsvm_dir}/*.py; do
 	touch -r $p.orig $p
 	rm $p.orig
 done
-chmod 0755 %{buildroot}%{python3_libsvm_dir}/{commonutil,svm,svmutil}.py
+#chmod 0755 %{buildroot}%{python3_libsvm_dir}/{commonutil,svm,svmutil}.py
 %endif
 
 %if %{with java}
