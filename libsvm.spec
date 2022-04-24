@@ -54,19 +54,24 @@ Patch4:	 %{name}-3.25.toolsDir.patch
 
 BuildRequires: grep
 
-%ifnarch ppc ppc64
-%define no_java FALSE
-%else
-%define no_java NO_JAVA
-Obsoletes: libsvm-java < 2.88-1
-%endif
-
 %description
 LIBSVM is an integrated software for support vector classification,
 (C-SVC, nu-SVC ), regression (epsilon-SVR, nu-SVR) and distribution
 estimation (one-class SVM ). It supports multi-class classification.
 
-%files
+#---------------------------------------------------------------------------
+
+%package -n svm-tools
+Summary:	A Library for Support Vector Machines
+
+%description -n svm-tools
+LIBSVM is an integrated software for support vector classification,
+(C-SVC, nu-SVC ), regression (epsilon-SVR, nu-SVR) and distribution
+estimation (one-class SVM). It supports multi-class classification.
+
+This packages provides some siplme tools.
+
+%files -n svm-tools
 %doc COPYRIGHT FAQ.html ChangeLog guide.pdf
 %{_bindir}/svm-predict
 %{_bindir}/svm-scale
@@ -78,8 +83,9 @@ estimation (one-class SVM ). It supports multi-class classification.
 
 %package -n %{libname}
 Summary:		Header file, object file, and source files of libsvm in C, C++ and Java
-BuildRequires:	glibc-devel gawk
-Requires: 		%{name} = %{version}-%{release}
+BuildRequires:	glibc-devel 
+BuildRequires:	gawk
+Requires: 		svm-tools = %{version}-%{release}
 
 %description -n %{libname}
 LIBSVM is an integrated software for support vector classification,
@@ -94,9 +100,10 @@ This package provdes the libsvm shared library.
 #---------------------------------------------------------------------------
 
 %package -n %{devname}
-Summary:		Header file, object file, and source files of libsvm in C, C++ and Java
+Summary:	Header file, object file, and source files of libsvm in C, C++ and Java
 BuildRequires:	glibc-devel gawk
-Requires: 		%{name} = %{version}-%{release}
+Requires: 	svm-tools = %{version}-%{release}
+Provides:	%{name}-devel
 
 %description -n %{devname}
 Header file, object file of libsvm in C, C++ and Java.
@@ -116,7 +123,7 @@ Summary:		Python tools and interfaces for libsvm
 BuildRequires:	pkgconfig(python3)
 BuildRequires:	python3dist(setuptools)
 BuildRequires:	python3dist(scipy)
-Requires:		%{name} = %{version}-%{release}
+Requires:		svm-tools = %{version}-%{release}
 #gnuplot is required by easy.py
 Requires:		gnuplot
 
@@ -144,7 +151,9 @@ BuildRequires:	maven-local
 %endif
 Requires:		java
 Requires:		javapackages-tools
-Requires:		%{name} = %{version}-%{release}
+Requires:		svm-tools = %{version}-%{release}
+
+Obsoletes:		libsvm-java < 2.88-1
 
 %description -n java-%{name}
 Java tools and interfaces for libsvm.
@@ -164,7 +173,7 @@ Summary:		Javadoc for libsvm
 BuildRequires:	java-devel
 BuildRequires:	javapackages-tools
 BuildArch:		noarch
-Requires:		%{name}-java = %{version}-%{release}
+Requires:		java-%{name} = %{version}-%{release}
 
 %description javadoc
 Javadoc for libsvm.
@@ -179,7 +188,7 @@ Javadoc for libsvm.
 %package -n octave-%{name}
 Summary:		Octave interface to libsvm
 BuildRequires:	octave-devel
-Requires:		%{name}%{?_isa} = %{version}-%{release}
+Requires:		svm-tools = %{version}-%{release}
 Requires:		octave
 
 %description -n octave-%{name}
@@ -197,7 +206,7 @@ Summary:		GTK version of svm-toy (libsvm demonstration program)
 BuildRequires:	gtk+2.0-devel
 BuildRequires:	desktop-file-utils
 Requires:		gtk+2.0
-Requires:		%{name} = %{version}-%{release}
+Requires:		svm-tools = %{version}-%{release}
 
 %description svm-toy-gtk
 svm-toy is a libsvm demonstration program which has a gtk-GUI to
@@ -218,7 +227,7 @@ Summary:		QT version of svm-toy (libsvm demonstration program)
 BuildRequires:	desktop-file-utils
 BuildRequires:	pkgconfig
 BuildRequires:	qt5-qtbase-devel
-Requires:		%{name} = %{version}-%{release}
+Requires:		svm-tools = %{version}-%{release}
 
 %description svm-toy-qt
 svm-toy is a libsvm demonstration program which has a qt-GUI to
