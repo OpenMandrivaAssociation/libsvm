@@ -35,10 +35,10 @@ Name:		libsvm
 Version:	3.25
 Release:	1
 License:	BSD
-URL:		http://www.csie.ntu.edu.tw/~cjlin/libsvm/
-Source0:	http://www.csie.ntu.edu.tw/~cjlin/libsvm/%{name}-%{version}.tar.gz
-Source1:	http://www.csie.ntu.edu.tw/~cjlin/libsvm/log
-Source2:	http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf
+URL:		https://www.csie.ntu.edu.tw/~cjlin/libsvm/
+Source0:	https://www.csie.ntu.edu.tw/~cjlin/libsvm/%{name}-%{version}.tar.gz
+Source1:	https://www.csie.ntu.edu.tw/~cjlin/libsvm/log
+Source2:	https://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf
 Source3:	libsvm-svm-toy-gtk.desktop
 Source4:	libsvm-svm-toy-qt.desktop
 Source5:	LibSVM-svm-toy-48.png
@@ -204,7 +204,7 @@ Octave interface for libsvm.
 %if %{with gtk}
 %package svm-toy-gtk
 Summary:		GTK version of svm-toy (libsvm demonstration program)
-BuildRequires:	gtk+2.0-devel
+BuildRequires:	pkgconfig(gtk+-2.0)
 BuildRequires:	desktop-file-utils
 Requires:		gtk+2.0
 Requires:		svm-tools = %{version}-%{release}
@@ -226,7 +226,6 @@ display the derived separating hyperplane.
 %package svm-toy-qt
 Summary:		QT version of svm-toy (libsvm demonstration program)
 BuildRequires:	desktop-file-utils
-BuildRequires:	pkgconfig
 BuildRequires:	qt5-qtbase-devel
 Requires:		svm-tools = %{version}-%{release}
 
@@ -293,17 +292,17 @@ make all RPM_CFLAGS="%{optflags}" LIBDIR="%{_libdir}" CPP_STD="%{cpp_std}" CXX=$
 %if %{with maven}
 %mvn_artifact %{name}.pom java/%{name}.jar
 %endif
-%__make svm-java JAVAC="%{javac}" JAR="%{jar}" RPM_CFLAGS="%{optflags}" CXX=${CXX}
+make svm-java JAVAC="%{javac}" JAR="%{jar}" RPM_CFLAGS="%{optflags}" CXX=${CXX}
 cp README java/README-Java
 %endif
 
 %if %{with gtk}
-%__make svm-gtk RPM_CFLAGS="%{optflags}" LIBDIR="%{_libdir}" CPP_STD="%{cpp_std}" CXX=${CXX}
+make svm-gtk RPM_CFLAGS="%{optflags}" LIBDIR="%{_libdir}" CPP_STD="%{cpp_std}" CXX=${CXX}
 cp README svm-toy/gtk
 %endif
 
 %if %{with qt}
-%__make svm-toy-qt RPM_CFLAGS="%{optflags}" LIBDIR="%{_libdir}" CPP_STD="%{cpp_std}" CXX=${CXX} MOC_PATH="%{moc_path}"
+make svm-toy-qt RPM_CFLAGS="%{optflags}" LIBDIR="%{_libdir}" CPP_STD="%{cpp_std}" CXX=${CXX} MOC_PATH="%{moc_path}"
 cp README svm-toy/qt
 %endif
 
@@ -316,7 +315,7 @@ cd -
 %endif
 
 %if %{with python}
-%__make svm-python PYTHON_VERSION="%{pyver}" 
+make svm-python PYTHON_VERSION="%{pyver}" 
 mv python/README python/README-Python
 %endif
 
@@ -327,8 +326,7 @@ mv tools/README tools/README-Tools
 %{set_build_flags}
 %make_install LIBDIR=%{_libdir} LIBSVM_VER="%{version}" RPM_CFLAGS="%{optflags}" LIBDIR="%{_libdir}" CPP_STD="%{cpp_std}" CXX=${CXX}
 
-#rm -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/src
-%__ln_s %{name}.so.%{shver} $RPM_BUILD_ROOT/%{_libdir}/%{name}.so
+ln -s %{name}.so.%{shver} %{buildroot}/%{_libdir}/%{name}.so
 
 %if %{with python}
 %__make install-python DESTDIR=%{buildroot} PYTHON_VERSION="%{pyver}"	
@@ -377,41 +375,41 @@ EOF
 %endif
 
 # icons
-mkdir -p $RPM_BUILD_ROOT/%{_datadir}/icons/hicolor/48x48/apps/
+mkdir -p %{buildroot}/%{_datadir}/icons/hicolor/48x48/apps/
 %if %{with gtk}
-cp %{name}-svm-toy-gtk-48.png $RPM_BUILD_ROOT/%{_datadir}/icons/hicolor/48x48/apps/
+cp %{name}-svm-toy-gtk-48.png %{buildroot}/%{_datadir}/icons/hicolor/48x48/apps/
 %endif
 %if %{with qt}
-cp %{name}-svm-toy-qt-48.png $RPM_BUILD_ROOT/%{_datadir}/icons/hicolor/48x48/apps/
+cp %{name}-svm-toy-qt-48.png %{buildroot}/%{_datadir}/icons/hicolor/48x48/apps/
 %endif
 
 # .deskrop
-mkdir -p $RPM_BUILD_ROOT/%{_datadir}/applications
+mkdir -p %{buildroot}/%{_datadir}/applications
 %if %{with gtk}
-cp %{name}-svm-toy-gtk.desktop $RPM_BUILD_ROOT/%{_datadir}/applications
+cp %{name}-svm-toy-gtk.desktop %{buildroot}/%{_datadir}/applications
 %endif
 %if %{with qt}
-cp %{name}-svm-toy-qt.desktop $RPM_BUILD_ROOT/%{_datadir}/applications
+cp %{name}-svm-toy-qt.desktop %{buildroot}/%{_datadir}/applications
 %endif
 
 # [Bug 521194] Python: 'import libsvm' doesn't work
 echo -e "# This file is not in the original libsvm tarball, but added for convenience of import libsvm.\n\
 # This file is released under BSD license, just like the rest of the package.\n"\
- > $RPM_BUILD_ROOT/%{libsvm_python_dir}/__init__.py
+ > %{buildroot}/%{libsvm_python_dir}/__init__.py
 
 %if %{with gtk}
 desktop-file-install --delete-original \
-	--dir=${RPM_BUILD_ROOT}%{_datadir}/applications \
-	${RPM_BUILD_ROOT}/%{_datadir}/applications/%{name}-svm-toy-gtk.desktop
+	--dir=%{buildroot}%{_datadir}/applications \
+	%{buildroot}/%{_datadir}/applications/%{name}-svm-toy-gtk.desktop
 %endif
 %if %{with qt}
 desktop-file-install --delete-original \
-	--dir=${RPM_BUILD_ROOT}%{_datadir}/applications \
-	${RPM_BUILD_ROOT}/%{_datadir}/applications/%{name}-svm-toy-qt.desktop \
+	--dir=%{buildroot}%{_datadir}/applications \
+	%{buildroot}/%{_datadir}/applications/%{name}-svm-toy-qt.desktop \
 %endif
 
 # Fix Bug 646154 - libsvm-python's pth is not set correctly
-echo 'libsvm' > $RPM_BUILD_ROOT/%{python_sitearch}/libsvm.pth
+echo 'libsvm' > %{buildroot}/%{python_sitearch}/libsvm.pth
 
 
 %if %{with gtk}
