@@ -10,7 +10,9 @@
 %global octpkg %{name}
 %global release_date 2021-04-14
 %global cpp_std c++17
+
 %{!?_javadir: %global _javadir %{_datadir}/java}
+%{!?_javadocdir: %global _javadocdir %{_datadir}/javadoc}
 
 %{!?pyver: %define pyver %(python -c 'import sys; print(sys.version[0:3])')}
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
@@ -52,8 +54,6 @@ Patch1:	 %{name}-3.25.pythonDir.patch
 Patch2:	 %{name}-3.25.javaDir.patch
 Patch3:	 %{name}-3.25.svm-toy.patch
 Patch4:	 %{name}-3.25.toolsDir.patch
-
-BuildRequires: grep
 
 %description
 LIBSVM is an integrated software for support vector classification,
