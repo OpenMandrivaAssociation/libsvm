@@ -309,8 +309,7 @@ cp README svm-toy/qt
 %if %{with octave}
 cd matlab
 octave -H -q --no-window-system --no-site-file << EOF
-#__make RPM_CFLAGS="%{optflags}" LIBDIR="%{_libdir}" CPP_STD="%{cpp_std}" CXX=${CXX}
-make -O V=1 LIBDIR="%{_libdir}" CPP_STD="%{cpp_std}" CXX=${CXX}
+make
 EOF
 cd -
 %endif
