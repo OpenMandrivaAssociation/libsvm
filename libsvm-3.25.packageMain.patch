@@ -5,7 +5,7 @@ diff -up ./Makefile.packageMain ./Makefile
  CXX ?= g++
 -CFLAGS = -Wall -Wconversion -O3 -fPIC
 +CFLAGS = ${RPM_CFLAGS} -Wall -Wconversion -O3 -fPIC
- SHVER = 2
+ SHVER = 3
 +export SHVER
  OS = $(shell uname)
 +MAKE = make

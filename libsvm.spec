@@ -1,6 +1,7 @@
-%define shver 2
+%define shver 3
+%define libname %mklibname svm
 %define devname %mklibname svm -d
-%define libname %mklibname svm %shver
+%define oldlibname %mklibname svm 2
 
 %global libdir_libsvm %{_libdir}/libsvm
 %global python3_libsvm_dir %{python3_sitearch}/libsvm
@@ -8,7 +9,7 @@
 %global pom_file_version 3.25
 %global pom_file_name JPP.%{maven_group_id}-%{name}.pom
 %global octpkg %{name}
-%global release_date 2021-04-14
+%global release_date 2022-08-11
 %global cpp_std c++17
 
 %{!?_javadir: %global _javadir %{_datadir}/java}
@@ -243,7 +244,7 @@ display the derived separating hyperplane.
 #---------------------------------------------------------------------------
 
 %prep
-%autosetup -p0
+%autosetup -p0 -n %{name}-3.3
 cp %{SOURCE1} ChangeLog
 cp %{SOURCE2} .
 
