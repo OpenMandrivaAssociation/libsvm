@@ -1,7 +1,6 @@
-diff -up ./Makefile.packageMain ./Makefile
---- ./Makefile.packageMain	2013-03-31 17:06:44.000000000 +1000
-+++ ./Makefile	2013-04-13 22:59:43.796601417 +1000
-@@ -1,11 +1,45 @@
+--- a/Makefile.orig
++++ b/Makefile
+@@ -1,7 +1,35 @@
  CXX ?= g++
 -CFLAGS = -Wall -Wconversion -O3 -fPIC
 +CFLAGS = ${RPM_CFLAGS} -Wall -Wconversion -O3 -fPIC
@@ -13,14 +12,10 @@ diff -up ./Makefile.packageMain ./Makefile
 +LIBS= -L${DOT_LIBS} -lsvm
 +export LIBSVM_VER
 +IS_64:=$(shell /bin/uname -i | awk '/64/ {print 64}')
++
 +PREFIXDIR?= /usr
 +export PREFIXDIR
- 
--all: svm-train svm-predict svm-scale
-+LIBDIR?=${PREFIXDIR}/lib${IS_64}
-+export LIBDIR
- 
--lib: svm.o
++
 +DATADIR?=${PREFIXDIR}/share
 +export DATADIR
 +
@@ -39,20 +34,23 @@ diff -up ./Makefile.packageMain ./Makefile
 +BINDIR_INSTALL:=${DESTDIR}/${BINDIR}
 +export BINDIR_INSTALL
 +
+ ifeq ($(OS),Darwin)
+ 	SHARED_LIB_FLAG = -dynamiclib -Wl,-install_name,libsvm.so.$(SHVER)
+ else
+@@ -12,17 +40,88 @@
+ # CFLAGS += -fopenmp
+ # SHARED_LIB_FLAG += -fopenmp
+ 
+-all: svm-train svm-predict svm-scale
 +all: lib svm-train svm-predict svm-scale # svm-python svm-java svm-toy-qt
-+
+ 
+-lib: svm.o
+-	$(CXX) $(SHARED_LIB_FLAG) svm.o -o libsvm.so.$(SHVER)
 +lib: libsvm.so.$(SHVER) libsvm.so
-+
 +libsvm.so: libsvm.so.$(SHVER)
 +	ln -sf libsvm.so.$(SHVER) libsvm.so
-+
 +libsvm.so.$(SHVER): svm.o
- 	if [ "$(OS)" = "Darwin" ]; then \
- 		SHARED_LIB_FLAG="-dynamiclib -Wl,-install_name,libsvm.so.$(SHVER)"; \
- 	else \
-@@ -14,12 +48,78 @@
- 	$(CXX) $${SHARED_LIB_FLAG} svm.o -o libsvm.so.$(SHVER)
- 
++	$(CXX) $(CFLAGS) $(SHARED_LIB_FLAG) svm.o -o libsvm.so.$(SHVER)
  svm-predict: svm-predict.c svm.o
 -	$(CXX) $(CFLAGS) svm-predict.c svm.o -o svm-predict -lm
 +	$(CXX) $(CFLAGS) svm-predict.c $(LIBS) -o svm-predict -lm
@@ -68,6 +66,7 @@ diff -up ./Makefile.packageMain ./Makefile
 +	rm -f *~ svm.o svm-train svm-predict svm-scale svm-toy/qt/svm-toy-qt
 +	${MAKE} -C python clean
 +	${MAKE} -C java clean
++
 +svm-python:
 +	${MAKE} -C python
 +
@@ -132,4 +131,4 @@ diff -up ./Makefile.packageMain ./Makefile
 +#	rm -f ${BINDIR_INSTALL}/svm-toy-gtk
 +	rm -f ${BINDIR_INSTALL}/svm-toy-qt
 +
-
++

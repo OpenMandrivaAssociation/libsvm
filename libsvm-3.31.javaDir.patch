@@ -1,6 +1,5 @@
-diff -up ./java/Makefile.javaDir ./java/Makefile
---- ./java/Makefile
-+++ ./java/Makefile
+--- a/java/Makefile
++++ b/java/Makefile
 @@ -4,14 +4,17 @@
  		libsvm/svm_print_interface.class \
  		svm_train.class svm_predict.class svm_toy.class svm_scale.class
@@ -8,9 +7,9 @@ diff -up ./java/Makefile.javaDir ./java/Makefile
 +JAVA_DOC_DIR=${INSTDIR}/share/javadoc/libsvm-${LIBSVM_VER}
 +CLASSPATH = .
  #JAVAC = jikes
--JAVAC_FLAGS = -target 1.7 -source 1.7
+-JAVAC_FLAGS = --release 11
 -JAVAC = javac
-+JAVAC_FLAGS = -target 1.8 -source 1.8  -classpath ${CLASSPATH}
++JAVAC_FLAGS =  --release 11  -classpath ${CLASSPATH}
 +JAVAC ?= javac
  # JAVAC_FLAGS =
 +JAR ?= jar
@@ -44,11 +43,4 @@ diff -up ./java/Makefile.javaDir ./java/Makefile
  
  dist: clean all
  	rm *.class libsvm/*.class
-diff -up ./java/test_applet.html.javaDir ./java/test_applet.html
---- ./java/test_applet.html.javaDir	2003-07-12 14:07:32.000000000 +1000
-+++ ./java/test_applet.html	2010-11-08 10:59:11.229518442 +1000
-@@ -1 +1,3 @@
--<APPLET code="svm_toy.class" archive="libsvm.jar" width=300 height=350></APPLET>
-+<html>
-+<applet code="svm_toy.class" archive="libsvm.jar" width=300 height=350></applet>
-+</html>
+

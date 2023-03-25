@@ -9,7 +9,7 @@
 %global pom_file_version 3.25
 %global pom_file_name JPP.%{maven_group_id}-%{name}.pom
 %global octpkg %{name}
-%global release_date 2022-08-11
+%global release_date 2023-02-28
 %global cpp_std c++17
 
 %{!?_javadir: %global _javadir %{_datadir}/java}
@@ -33,7 +33,7 @@
 
 Summary:	A Library for Support Vector Machines
 Name:		libsvm
-Version:	3.30
+Version:	3.31
 Release:	1
 License:	BSD
 URL:		https://www.csie.ntu.edu.tw/~cjlin/libsvm/
@@ -50,11 +50,11 @@ Source8:	libsvm.CITATION
 Source9:	libsvm.DESCRIPTION
 Source10:	%{name}.rpmlintrc
 
-Patch0:	 %{name}-3.25.packageMain.patch
-Patch1:	 %{name}-3.25.pythonDir.patch
-Patch2:	 %{name}-3.25.javaDir.patch
-Patch3:	 %{name}-3.25.svm-toy.patch
-Patch4:	 %{name}-3.25.toolsDir.patch
+Patch0:	 %{name}-3.31.packageMain.patch
+Patch1:	 %{name}-3.31.pythonDir.patch
+Patch2:	 %{name}-3.31.javaDir.patch
+Patch3:	 %{name}-3.31.svm-toy.patch
+Patch4:	 %{name}-3.31.toolsDir.patch
 
 %description
 LIBSVM is an integrated software for support vector classification,
@@ -163,7 +163,7 @@ Install this package if you want to develop
 programs with libsvm in Java.
 
 %files -n java-%{name}
-%doc java/README-Java java/test_applet.html
+%doc java/README-Java
 %{_javadir}/%{name}.jar
 %endif
 
@@ -244,7 +244,7 @@ display the derived separating hyperplane.
 #---------------------------------------------------------------------------
 
 %prep
-%autosetup -p0 -n %{name}-3.3
+%autosetup -p1
 cp %{SOURCE1} ChangeLog
 cp %{SOURCE2} .
 
@@ -330,7 +330,7 @@ mv tools/README tools/README-Tools
 ln -s %{name}.so.%{shver} %{buildroot}/%{_libdir}/%{name}.so
 
 %if %{with python}
-%__make install-python DESTDIR=%{buildroot} PYTHON_VERSION="%{pyver}"	
+make install-python DESTDIR=%{buildroot} LIBDIR=%{_libdir} PYTHON_VERSION="%{pyver}"	
 install -p -m 755 tools/*.py %{buildroot}%{python3_libsvm_dir}
 for p in %{buildroot}%{python3_libsvm_dir}/*.py; do
 	sed -i.orig -e 's|#!/usr/bin/env python|#!%{python3}|' $p
@@ -341,7 +341,7 @@ done
 %endif
 
 %if %{with java}
-%__make install-java DESTDIR=%{buildroot} JAVA_TARGET_DIR="%{buildroot}%{_javadir}"
+make install-java DESTDIR=%{buildroot} JAVA_TARGET_DIR="%{buildroot}%{_javadir}"
 mkdir -p %{buildroot}%{_javadocdir}/%{name}
 cp -p -R java/docs/* %{buildroot}%{_javadocdir}/%{name}
 %if %{with maven}
@@ -350,11 +350,11 @@ cp -p -R java/docs/* %{buildroot}%{_javadocdir}/%{name}
 %endif
 
 %if %{with gtk}
-%__make install-toy-gtk DESTDIR=%{buildroot}
+make install-toy-gtk DESTDIR=%{buildroot}
 %endif
 
 %if %{with qt}
-%__make install-toy-qt DESTDIR=%{buildroot}
+make install-toy-qt DESTDIR=%{buildroot}
 %endif
 
 %if %{with octave}
@@ -384,7 +384,7 @@ cp %{name}-svm-toy-gtk-48.png %{buildroot}/%{_datadir}/icons/hicolor/48x48/apps/
 cp %{name}-svm-toy-qt-48.png %{buildroot}/%{_datadir}/icons/hicolor/48x48/apps/
 %endif
 
-# .deskrop
+# .desktop
 mkdir -p %{buildroot}/%{_datadir}/applications
 %if %{with gtk}
 cp %{name}-svm-toy-gtk.desktop %{buildroot}/%{_datadir}/applications

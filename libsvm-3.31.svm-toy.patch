@@ -1,5 +1,5 @@
---- svm-toy/qt/Makefile
-+++ svm-toy/qt/Makefile
+--- a/svm-toy/qt/Makefile
++++ b/svm-toy/qt/Makefile
 @@ -1,19 +1,25 @@
  # use  ``export QT_SELECT=qt5'' in a command window for using qt5
  # may need to adjust the path of header files

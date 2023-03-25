@@ -1,19 +1,18 @@
-diff -up ./python/Makefile.pythonDir ./python/Makefile
---- ./python/Makefile.pythonDir	2011-05-10 09:35:15.000000000 +1000
-+++ ./python/Makefile	2011-11-08 09:49:54.280501207 +1000
-@@ -1,4 +1,20 @@
+--- a/python/Makefile
++++ b/python/Makefile
+@@ -1,4 +1,18 @@
+-all = lib
 +PYTHONDIR_NAME ?= python${PYTHON_VERSION}/site-packages/libsvm
-+PYTHONDIR?=${LIBDIR}/${PYTHONDIR_NAME}
-+PYTHONDIR_INSTALL=${DESTDIR}/${PYTHONDIR}
++PYTHONDIR ?= ${LIBDIR}/${PYTHONDIR_NAME}
++PYTHONDIR_INSTALL ?= ${DESTDIR}/${PYTHONDIR}
 +SVM_TOOLS:= $(notdir $(wildcard ../tools/*.py))
-+
- all = lib
  
 -lib:
+-	make -C .. lib
 +all: lib
 +
 +lib: ../svm.cpp ../svm.h
- 	make -C .. lib
++	make -C .. lib
 +
 +install: all
 +	mkdir -p ${PYTHONDIR_INSTALL}
