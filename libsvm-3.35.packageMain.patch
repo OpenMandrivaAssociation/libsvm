@@ -2,9 +2,8 @@
 +++ b/Makefile
 @@ -1,7 +1,35 @@
  CXX ?= g++
--CFLAGS = -Wall -Wconversion -O3 -fPIC
-+CFLAGS = ${RPM_CFLAGS} -Wall -Wconversion -O3 -fPIC
- SHVER = 3
+ CFLAGS = -Wall -Wconversion -O3 -fPIC
+ SHVER = 4
 +export SHVER
  OS = $(shell uname)
 +MAKE = make

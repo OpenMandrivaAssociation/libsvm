@@ -1,4 +1,4 @@
-%define shver 3
+%define shver 4
 %define libname %mklibname svm
 %define devname %mklibname svm -d
 %define oldlibname %mklibname svm 2
@@ -33,7 +33,7 @@
 
 Summary:	A Library for Support Vector Machines
 Name:		libsvm
-Version:	3.32
+Version:	3.35
 Release:	1
 License:	BSD
 URL:		https://www.csie.ntu.edu.tw/~cjlin/libsvm/
@@ -50,7 +50,7 @@ Source8:	libsvm.CITATION
 Source9:	libsvm.DESCRIPTION
 Source10:	%{name}.rpmlintrc
 
-Patch0:	 %{name}-3.31.packageMain.patch
+Patch0:	 %{name}-3.35.packageMain.patch
 Patch1:	 %{name}-3.31.pythonDir.patch
 Patch2:	 %{name}-3.31.javaDir.patch
 Patch3:	 %{name}-3.31.svm-toy.patch
