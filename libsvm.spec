@@ -34,7 +34,7 @@
 Summary:	A Library for Support Vector Machines
 Name:		libsvm
 Version:	3.35
-Release:	1
+Release:	2
 License:	BSD
 URL:		https://www.csie.ntu.edu.tw/~cjlin/libsvm/
 Source0:	https://www.csie.ntu.edu.tw/~cjlin/libsvm/%{name}-%{version}.tar.gz
