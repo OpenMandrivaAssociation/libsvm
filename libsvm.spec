@@ -85,6 +85,7 @@ This packages provides some siplme tools.
 
 %package -n %{libname}
 Summary:		Header file, object file, and source files of libsvm in C, C++ and Java
+BuildRequires:	make
 BuildRequires:	glibc-devel 
 BuildRequires:	gawk
 Requires: 		svm-tools = %{version}-%{release}
