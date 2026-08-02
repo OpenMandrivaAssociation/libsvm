@@ -1,6 +1,8 @@
+diff --git a/tools/easy.py b/tools/easy.py
+index dd5a2c6..c1bcda9 100755
 --- a/tools/easy.py
 +++ b/tools/easy.py
-@@ -12,10 +12,10 @@
+@@ -12,10 +12,10 @@ if len(sys.argv) <= 1:
  
  is_win32 = (sys.platform == 'win32')
  if not is_win32:
@@ -15,10 +17,11 @@
      gnuplot_exe = "/usr/bin/gnuplot"
  else:
          # example for windows
-
+diff --git a/tools/grid.py b/tools/grid.py
+index bf70eac..81f51a7 100755
 --- a/tools/grid.py
 +++ b/tools/grid.py
-@@ -18,7 +18,7 @@
+@@ -18,7 +18,7 @@ class GridOption:
      def __init__(self, dataset_pathname, options):
          dirname = os.path.dirname(__file__)
          if sys.platform != 'win32':
@@ -27,4 +30,3 @@
              self.gnuplot_pathname = '/usr/bin/gnuplot'
          else:
              # example for windows
-

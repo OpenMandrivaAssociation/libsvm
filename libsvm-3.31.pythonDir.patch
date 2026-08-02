@@ -1,3 +1,5 @@
+diff --git a/python/Makefile b/python/Makefile
+index 9837052..5a3ed13 100644
 --- a/python/Makefile
 +++ b/python/Makefile
 @@ -1,4 +1,18 @@
@@ -8,11 +10,10 @@
 +SVM_TOOLS:= $(notdir $(wildcard ../tools/*.py))
  
 -lib:
--	make -C .. lib
 +all: lib
 +
 +lib: ../svm.cpp ../svm.h
-+	make -C .. lib
+ 	make -C .. lib
 +
 +install: all
 +	mkdir -p ${PYTHONDIR_INSTALL}

@@ -1,4 +1,4 @@
---- a/Makefile.orig
+--- a/Makefile
 +++ b/Makefile
 @@ -1,7 +1,35 @@
  CXX ?= g++
